@@ -9,8 +9,8 @@ import com.android.tools.lint.detector.api.Detector;
 import com.android.tools.lint.detector.api.Implementation;
 import com.android.tools.lint.detector.api.Issue;
 import com.android.tools.lint.detector.api.JavaContext;
+import com.android.tools.lint.detector.api.Lint;
 import com.android.tools.lint.detector.api.LintFix;
-import com.android.tools.lint.detector.api.LintUtils;
 import com.android.tools.lint.detector.api.Scope;
 import com.android.tools.lint.detector.api.Severity;
 import com.intellij.psi.PsiClass;
@@ -99,7 +99,7 @@ public final class WrongTimberUsageDetector extends Detector implements Detector
   private void checkNestedStringFormat(JavaContext context, UCallExpression call) {
     UElement current = call;
     while (true) {
-      current = LintUtils.skipParentheses(current.getUastParent());
+      current = Lint.skipParentheses(current.getUastParent());
       if (current == null || current instanceof UMethod) {
         // Reached AST root or code block node; String.format not inside Timber.X(..).
         return;
@@ -310,7 +310,7 @@ public final class WrongTimberUsageDetector extends Detector implements Detector
     } else if (expression instanceof PsiLiteralExpression) {
       PsiLiteralExpression literalExpression = (PsiLiteralExpression) expression;
       PsiType expressionType = literalExpression.getType();
-      if (LintUtils.isString(expressionType)) {
+      if (Lint.isString(expressionType)) {
         return String.class;
       } else if (expressionType == PsiType.INT) {
         return Integer.TYPE;
@@ -548,7 +548,7 @@ public final class WrongTimberUsageDetector extends Detector implements Detector
     UQualifiedReferenceExpression argExpression = (UQualifiedReferenceExpression) arg;
     PsiElement psi = argExpression.getPsi();
 
-    if (psi != null && LintUtils.isKotlin(psi.getLanguage())) {
+    if (psi != null && Lint.isKotlin(psi.getLanguage())) {
       return isPropertyOnSubclassOf(context, argExpression, "message", Throwable.class);
     }
 
